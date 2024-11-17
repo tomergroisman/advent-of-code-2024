@@ -1,0 +1,2 @@
+aoco @ git+https://github.com/tomergroisman/aoco
+black==24.10.0

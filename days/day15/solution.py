@@ -15,10 +15,7 @@ def part_1(raw_input: str) -> float:
 
 def part_2(raw_input: str) -> float:
     board, movements = parse_input(raw_input, True)
-    print(".")
-    print_board(board)
     run_robot(board, movements)
-    print_board(board)
     return calc_gps(board)
 
 
@@ -61,6 +58,7 @@ def move_object(board: Board, p: Position, d: Delta) -> Position:
             advance(board, p, pn)
             return pn
         case "#":
+            is_blocked = True
             return p
         case "O":
             if move_object(board, pn, d) == pn:
@@ -76,6 +74,9 @@ def move_object(board: Board, p: Position, d: Delta) -> Position:
                     advance(board, p, pn)
                     return pn
             else:
+                if is_end_blocked(board, p, d):
+                    return p
+
                 pnn = (pn[0], pn[1] + 1) if c == "[" else (pn[0], pn[1] - 1)
                 m1, m2 = move_object(board, pn, d), move_object(board, pnn, d)
 
@@ -91,6 +92,31 @@ def move_object(board: Board, p: Position, d: Delta) -> Position:
                     if m2 != pnn:
                         revert(board, m2, pnn)
                         return p
+
+
+def is_end_blocked(board: Board, p: Position, d: Delta):
+    q, v = [p], set()
+
+    while q:
+        p = q.pop(0)
+
+        if p in v:
+            continue
+        v.add(p)
+
+        c = board[p[0]][p[1]]
+
+        if c == "#":
+            return True
+
+        if c == "[":
+            q.append((p[0], p[1] + 1))
+            q.append((p[0] + d[0], p[1] + d[1]))
+        elif c == "]":
+            q.append((p[0], p[1] - 1))
+            q.append((p[0] + d[0], p[1] + d[1]))
+
+    return False
 
 
 def advance(board: Board, a: Position, b: Position):

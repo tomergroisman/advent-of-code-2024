@@ -2,7 +2,6 @@ import math
 import sys
 from pathlib import Path
 import re
-from time import sleep
 
 type Position = tuple[int, int]
 type Velocity = tuple[int, int]
